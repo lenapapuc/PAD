@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "zJmRG3xgzVBXT9/yRVZ486qgqo5P4Y8KAbQNjFeMYdw=",
+  "Source": "MicroserviceBooking",
+  "BasePath": "_content/MicroserviceBooking",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
