@@ -14,6 +14,7 @@ namespace MicroserviceBooking
     .AddJsonFile("appsettings.json")
     .Build();
 
+            ThreadPool.SetMaxThreads(4, 3);
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));

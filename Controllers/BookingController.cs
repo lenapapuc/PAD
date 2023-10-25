@@ -23,10 +23,13 @@ namespace MicroserviceBooking.Controllers
         [Route("book")]
         public async Task<IActionResult> CreateBooking([FromBody] Booking request)
         {
+
             if (request == null)
             {
                 return BadRequest("Invalid data.");
             }
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
 
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -50,6 +53,11 @@ namespace MicroserviceBooking.Controllers
                     return Ok($"Booking created successfully with id {booking.Id}");
 
                 }
+                catch (OperationCanceledException)
+                {
+                    // Handle the timeout
+                    return StatusCode(504, "Request timed out");
+                }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
@@ -70,13 +78,16 @@ namespace MicroserviceBooking.Controllers
                 return NotFound(); // No booking found with the specified Id
             }
 
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
             // Make an HTTP GET request to the Listings API to retrieve listing details
             var httpClient = new HttpClient();
             var listingId = booking.ListingId; // Get the ListingId from the booking
 
             try
             {
-                var listingResponse = await httpClient.GetStringAsync($"https://localhost:7126/listings/{listingId}");
+                await Task.Delay(TimeSpan.FromSeconds(2), cts.Token);
+                var listingResponse = await httpClient.GetStringAsync($"http://localhost:5114/listings/{listingId}");
 
                 // Deserialize the listing response from the external API
                 var listingDetails = JsonConvert.DeserializeObject<List<Helper.Listing>>(listingResponse);
@@ -94,6 +105,11 @@ namespace MicroserviceBooking.Controllers
                 };
 
                 return Ok(response);
+            }
+            catch (OperationCanceledException)
+            {
+                // Handle the timeout
+                return StatusCode(504, "Request timed out");
             }
             catch (Exception ex)
             {
