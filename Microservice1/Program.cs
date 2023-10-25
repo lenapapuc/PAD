@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
 
 using Microsoft.EntityFrameworkCore.SqlServer;
 
@@ -17,6 +18,8 @@ namespace Microservice1
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("appsettings.json")
     .Build();
+          
+            ThreadPool.SetMaxThreads(4, 3);
 
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(options =>

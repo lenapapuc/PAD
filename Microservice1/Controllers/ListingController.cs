@@ -7,8 +7,10 @@ using Microservice1.Models;
 using Microservice1;
 using static Microservice1.Models.Helper;
 
+
 [Route("listings")]
 [ApiController]
+
 public class ListingController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -27,6 +29,9 @@ public class ListingController : ControllerBase
             return BadRequest("Invalid data.");
         }
 
+        
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
         using (var transaction = _context.Database.BeginTransaction())
         {
             try
@@ -44,6 +49,10 @@ public class ListingController : ControllerBase
                 };
 
                 _context.Listings.Add(listing);
+
+                // Simulated long-running operation
+               // await Task.Delay(TimeSpan.FromSeconds(2), cts.Token);
+
                 await _context.SaveChangesAsync();
 
                 // Create Availability entries
@@ -69,6 +78,11 @@ public class ListingController : ControllerBase
                 return Ok($"Listing created successfully with id {listing.Id}");
 
             }
+            catch (OperationCanceledException)
+            {
+                // Handle the timeout
+                return StatusCode(504, "Request timed out");
+            }
             catch (Exception ex)
             {
                 transaction.Rollback();
@@ -77,49 +91,74 @@ public class ListingController : ControllerBase
         }
     }
 
+
     [HttpGet]
     [Route("city/{cityName}")]
-
-    public IActionResult GetListingsInCity(string cityName)
+    public async Task<IActionResult> GetListingsInCity(string cityName)
     {
-        // Query the database to find listings in the specified city
-        var listingsInCity = _context.Listings
-            .Where(listing => listing.Location == cityName)
-            .ToList();
-
-        if (listingsInCity.Count == 0)
+        try
         {
-            return NotFound(); // No listings found in the specified city
-        }
-        var responseList = CreateResponseList(listingsInCity);  
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var cancellationToken = cts.Token;
 
-        return Ok(responseList);
+            // Query the database to find listings in the specified city
+            var listingsInCity = await _context.Listings
+                .Where(listing => listing.Location == cityName)
+                .ToListAsync(cancellationToken); // Use ToListAsync with the CancellationToken
+
+            if (listingsInCity.Count == 0)
+            {
+                return NotFound(); // No listings found in the specified city
+            }
+
+            var responseList = CreateResponseList(listingsInCity);
+            return Ok(responseList);
+        }
+        catch (OperationCanceledException)
+        {
+            // Handle the timeout
+            return StatusCode(504, "Request timed out");
+        }
     }
+
 
     [HttpGet]
     [Route("{Id}")]
 
-    public IActionResult GetListing(Guid Id)
+    public async Task<IActionResult> GetListing(Guid Id)
     {
-        // Query the database to find listing with specified Id
-        var listingSearched = _context.Listings
-            .Where(listing => listing.Id == Id)
-            .ToList();
-
-        if (listingSearched.Count == 0)
+        try
         {
-            return NotFound(); // No listings found with specified Id
-        }
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var cancellationToken = cts.Token;
+            // Query the database to find listing with specified Id
+            var listingSearched = await _context.Listings
+                .Where(listing => listing.Id == Id)
+                .ToListAsync(cancellationToken);
 
-        var responseList = CreateResponseList(listingSearched);
+            if (listingSearched.Count == 0)
+            {
+                return NotFound(); // No listings found with specified Id
+            }
+
+            var responseList = CreateResponseList(listingSearched);
+
+            return Ok(responseList);
+
+        }
+        catch(OperationCanceledException)
+        {
+            return StatusCode(504, "Request timed out");
+        }
         
-        return Ok(responseList);
     }
 
     [Route("update/{id}")]
     [HttpPatch]
     public async Task<IActionResult> UpdateListing(Guid id, [FromBody] ListingPatchRequest request)
     {
+
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         if (request == null)
         {
             return BadRequest("Invalid data.");
@@ -200,6 +239,11 @@ public class ListingController : ControllerBase
 
                 return Ok($"Listing with ID {listing.Id} updated successfully");
             }
+            catch (OperationCanceledException)
+            {
+                // Handle the timeout
+                return StatusCode(504, "Request timed out");
+            }
             catch (Exception ex)
             {
                 transaction.Rollback();
@@ -213,9 +257,10 @@ public class ListingController : ControllerBase
   
     public async Task<IActionResult> DeleteListing(Guid id)
     {
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         var listing = await _context.Listings
             .FirstOrDefaultAsync(l => l.Id == id);
-        Console.WriteLine(listing);
+       
 
         if (listing == null)
         {
@@ -238,11 +283,17 @@ public class ListingController : ControllerBase
 
                 return Ok($"Listing with ID {listing.Id} and its associated Availability records have been deleted.");
             }
+            catch (OperationCanceledException)
+            {
+                // Handle the timeout
+                return StatusCode(504, "Request timed out");
+            }
             catch (Exception ex)
             {
                 transaction.Rollback();
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
+           
         }
     }
 
