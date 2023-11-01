@@ -10,7 +10,20 @@
 			"name": "ListingsCityGET",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/listings/city/Chicago",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"listings",
+						"city",
+						"Chicago"
+					]
+				}
 			},
 			"response": []
 		},
@@ -18,7 +31,19 @@
 			"name": "ListingGET",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/listings/E094C3EE-F40A-4100-8D67-08DBD251FA4A",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"listings",
+						"E094C3EE-F40A-4100-8D67-08DBD251FA4A"
+					]
+				}
 			},
 			"response": []
 		},
@@ -26,39 +51,128 @@
 			"name": "BookingGET",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/bookings/2F38FD8A-637D-4C28-CD58-08DBD59C1A49",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"bookings",
+						"2F38FD8A-637D-4C28-CD58-08DBD59C1A49"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "BookingPOST",
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"ListingId\" : \"E094C3EE-F40A-4100-8D67-08DBD251FA4A\", \r\n    \"UserId\" : \"123\", \r\n    \"PaymentMethod\" : \"Card\", \r\n    \"StartDate\" : \"2023-10-24\", \r\n    \"EndDate\" : \"2023-10-24\"\r\n }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/bookings/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"bookings",
+						"create"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "ListingsPOST",
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"Name\": \"Example Listing\",\r\n \"Description\": \"This is an example listing description.\", \r\n \"User_Id\": 1, \"Location\": \"Example City\", \r\n \"Price\": 100.00, \"Country\": \"Example Country\",\r\n \"Amenities\": \"This is an amenity\", \r\n \"Availability\":\r\n  [\r\n { \"Date\": \"2023-10-30\", \r\n  \"Available\": true, \r\n  \"Price\": 110.00 }, \r\n  { \r\n      \"Date\": \"2023-11-05\", \r\n      \"Available\": false,\r\n       \"Price\": null } ] }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/listings/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"listings",
+						"create"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "ListingsPATCH",
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Availability\": [\r\n        {\r\n            \"Date\": \"2023-10-30\",\r\n            \"Available\": true,\r\n            \"Price\": 110.00\r\n        },\r\n        {\r\n            \"Date\": \"2023-11-05\",\r\n            \"Available\": false,\r\n            \"Price\": null\r\n        }\r\n    ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/listings/update/E094C3EE-F40A-4100-8D67-08DBD251FA4A",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"listings",
+						"update",
+						"E094C3EE-F40A-4100-8D67-08DBD251FA4A"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "ListingsDELETE",
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/listings/delete/E094C3EE-F40A-4100-8D67-08DBD251FA4A",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"listings",
+						"delete",
+						"E094C3EE-F40A-4100-8D67-08DBD251FA4A"
+					]
+				}
 			},
 			"response": []
 		}
