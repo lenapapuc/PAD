@@ -19,7 +19,7 @@ If there are faults at one of the services, it should not impact the rest of the
 
  **Review and Rating Service**: This service manages reviews and ratings for properties and hosts. Users can leave reviews and ratings for properties they have stayed in. It also calculates and displays overall ratings for properties and hosts.
 
-![](architecture.drawio%20(1).png)
+![](diagram.drawio.png)
 ### 3. Endpoints
 
 ### User Service
